@@ -1,11 +1,14 @@
 package com.springboot.blog;
 
+import com.springboot.blog.entity.Role;
+import com.springboot.blog.repository.RoleRepository;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Contact;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.info.License;
 import org.modelmapper.ModelMapper;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -27,7 +30,7 @@ import org.springframework.context.annotation.Bean;
 				url = "https://github.com/lamchucuocfuck/springboot_blog.git"
 		)
 )
-public class SpringbootBlogRestapiApplication {
+public class SpringbootBlogRestapiApplication{
 
 	@Bean
 	public ModelMapper modelMapper() {
@@ -37,5 +40,7 @@ public class SpringbootBlogRestapiApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(SpringbootBlogRestapiApplication.class, args);
 	}
+
+	private RoleRepository roleRepository;
 
 }

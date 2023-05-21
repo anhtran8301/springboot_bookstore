@@ -1,6 +1,6 @@
 package com.springboot.blog.payload;
 
-import jakarta.persistence.Column;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
@@ -8,6 +8,8 @@ import lombok.Data;
 
 @Data
 public class CommentDto {
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private long id;
 
     @NotEmpty(message = "Name should not be null or empty")

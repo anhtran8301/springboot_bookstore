@@ -18,6 +18,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/posts")
+//@CrossOrigin
 @Tag(
         name = "CRUD REST APIs for Post Resource"
 )

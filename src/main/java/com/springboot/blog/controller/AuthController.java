@@ -37,10 +37,8 @@ public class AuthController {
     )
     @PostMapping(value = "/login")
     public ResponseEntity<JWTAuthResponse> login(@RequestBody LoginDto loginDto) {
-        String token = authService.login(loginDto);
+        JWTAuthResponse jwtAuthResponse = authService.login(loginDto);
 
-        JWTAuthResponse jwtAuthResponse = new JWTAuthResponse();
-        jwtAuthResponse.setAccessToken(token);
 
         return ResponseEntity.ok(jwtAuthResponse);
     }
@@ -52,7 +50,7 @@ public class AuthController {
     )
     @ApiResponse(
             responseCode = "201",
-            description = "Http Status 200 User Registered Successfully"
+            description = "Http Status 201 User Registered Successfully"
     )
     @PostMapping(value = "/register")
     public ResponseEntity<String> register(@RequestBody RegisterDto registerDto) {

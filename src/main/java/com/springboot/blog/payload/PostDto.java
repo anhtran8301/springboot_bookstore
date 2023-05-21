@@ -1,5 +1,6 @@
 package com.springboot.blog.payload;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -13,6 +14,8 @@ import java.util.Set;
         description = "PostDto Model Information"
 )
 public class PostDto {
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private long id;
 
     @Schema(

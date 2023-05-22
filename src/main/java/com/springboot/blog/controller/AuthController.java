@@ -7,6 +7,7 @@ import com.springboot.blog.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.boot.json.GsonJsonParser;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -38,7 +39,6 @@ public class AuthController {
     @PostMapping(value = "/login")
     public ResponseEntity<JWTAuthResponse> login(@RequestBody LoginDto loginDto) {
         JWTAuthResponse jwtAuthResponse = authService.login(loginDto);
-
 
         return ResponseEntity.ok(jwtAuthResponse);
     }

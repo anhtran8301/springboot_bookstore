@@ -1,10 +1,8 @@
 package com.springboot.blog.payload;
 
 import com.springboot.blog.security.UserPrinciple;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.springboot.blog.service.AuthService;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Collection;
@@ -16,9 +14,9 @@ import java.util.Collection;
 public class JWTAuthResponse {
 
     private String accessToken;
-    private String tokenType;
+//    private String tokenType;
 
-    private String name;
-    private Collection<? extends GrantedAuthority> roles;
+     private UserPrinciple userData;
+
 
 }

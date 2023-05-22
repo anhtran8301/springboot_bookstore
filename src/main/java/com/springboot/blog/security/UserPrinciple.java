@@ -2,8 +2,7 @@ package com.springboot.blog.security;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.springboot.blog.entity.User;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,6 +11,8 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Setter
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserPrinciple implements UserDetails {
@@ -19,6 +20,7 @@ public class UserPrinciple implements UserDetails {
     private String name;
     private String username;
     private String email;
+
     @JsonIgnore
     private String password;
     private Collection<? extends GrantedAuthority> roles;
@@ -38,45 +40,44 @@ public class UserPrinciple implements UserDetails {
         );
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     @Override
+    @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles;
     }
 
     @Override
+    @JsonIgnore
     public String getPassword() {
         return password;
     }
 
     @Override
+    @JsonIgnore
     public String getUsername() {
         return username;
     }
 
     @Override
+    @JsonIgnore
     public boolean isAccountNonExpired() {
         return true;
     }
 
     @Override
+    @JsonIgnore
     public boolean isAccountNonLocked() {
         return true;
     }
 
     @Override
+    @JsonIgnore
     public boolean isCredentialsNonExpired() {
         return true;
     }
 
     @Override
+    @JsonIgnore
     public boolean isEnabled() {
         return true;
     }

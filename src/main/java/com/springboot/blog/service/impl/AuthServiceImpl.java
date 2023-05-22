@@ -52,8 +52,9 @@ public class AuthServiceImpl implements AuthService {
 
         String token = jwtTokenProvider.generateToken(authentication);
         UserPrinciple userPrinciple = (UserPrinciple) authentication.getPrincipal();
+
 //        return token;
-        return new JWTAuthResponse(token, "Bearer", userPrinciple.getName(), userPrinciple.getAuthorities());
+        return new JWTAuthResponse(token, userPrinciple);
     }
 
     @Override

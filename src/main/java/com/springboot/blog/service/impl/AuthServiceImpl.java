@@ -1,60 +1,81 @@
 package com.springboot.blog.service.impl;
 
+import com.springboot.blog.entity.RefreshToken;
 import com.springboot.blog.entity.Role;
 import com.springboot.blog.entity.User;
 import com.springboot.blog.exception.BlogAPIException;
+import com.springboot.blog.exception.TokenRefreshException;
 import com.springboot.blog.payload.JWTAuthResponse;
 import com.springboot.blog.payload.LoginDto;
+import com.springboot.blog.payload.MessageResponse;
 import com.springboot.blog.payload.RegisterDto;
 import com.springboot.blog.repository.RoleRepository;
 import com.springboot.blog.repository.UserRepository;
-import com.springboot.blog.security.JwtTokenProvider;
+import com.springboot.blog.security.JwtUtils;
+import com.springboot.blog.security.RefreshTokenService;
 import com.springboot.blog.security.UserPrinciple;
 import com.springboot.blog.service.AuthService;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.security.core.AuthenticationException;
 
 import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
-    private AuthenticationManager authenticationManager;
-    private UserRepository userRepository;
-    private RoleRepository roleRepository;
-    private PasswordEncoder passwordEncoder;
-    private JwtTokenProvider jwtTokenProvider;
-
-    public AuthServiceImpl(AuthenticationManager authenticationManager,
-                           UserRepository userRepository,
-                           RoleRepository roleRepository,
-                           PasswordEncoder passwordEncoder,
-                           JwtTokenProvider jwtTokenProvider) {
-        this.authenticationManager = authenticationManager;
-        this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.jwtTokenProvider = jwtTokenProvider;
-    }
+    private final AuthenticationManager authenticationManager;
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtUtils jwtUtils;
+    private final RefreshTokenService refreshTokenService;
 
     @Override
-    public JWTAuthResponse login(LoginDto loginDto) {
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                loginDto.getUsernameOrEmail(), loginDto.getPassword()));
+    public ResponseEntity<?> login(LoginDto loginDto) {
+       try {
+           Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                   loginDto.getUsernameOrEmail(), loginDto.getPassword()));
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+           SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        String token = jwtTokenProvider.generateToken(authentication);
-        UserPrinciple userPrinciple = (UserPrinciple) authentication.getPrincipal();
+           UserPrinciple userPrinciple = (UserPrinciple) authentication.getPrincipal();
+           ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(userPrinciple);
+           List<String> roles = userPrinciple.getAuthorities().stream()
+                   .map(item -> item.getAuthority())
+                   .collect(Collectors.toList());
+           RefreshToken refreshToken = refreshTokenService.createRefreshToken(userPrinciple.getId());
 
-//        return token;
-        return new JWTAuthResponse(token, userPrinciple);
+           ResponseCookie jwtRefreshCookie = jwtUtils.generateRefreshJwtCookie(refreshToken.getToken());
+
+           return ResponseEntity.ok()
+                   .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+                   .header(HttpHeaders.SET_COOKIE, jwtRefreshCookie.toString())
+                   .body(new JWTAuthResponse(
+                           jwtCookie.getValue(),
+                           jwtRefreshCookie.getValue(),
+                           userPrinciple)
+);
+
+
+       } catch (AuthenticationException e) {
+           throw new BlogAPIException(HttpStatus.UNPROCESSABLE_ENTITY, "Invalid username/password supplied");
+       }
     }
 
     @Override
@@ -84,4 +105,44 @@ public class AuthServiceImpl implements AuthService {
 
         return "User registered successfully";
     }
+
+    @Override
+    public ResponseEntity<?> refreshToken(HttpServletRequest request) {
+        String refreshToken = jwtUtils.getJwtRefreshFromCookies(request);
+
+        if ((refreshToken != null) && (refreshToken.length() > 0)) {
+            return refreshTokenService.findByToken(refreshToken)
+                    .map(refreshTokenService::verifyExpiration)
+                    .map(RefreshToken::getUser)
+                    .map(user -> {
+                        ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(user);
+
+                        return ResponseEntity.ok()
+                                .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+                                .body(new MessageResponse("Token is refreshed successfully!"));
+                    })
+                    .orElseThrow(() -> new TokenRefreshException(refreshToken,
+                            "Refresh token is not in database!"));
+        }
+
+        return ResponseEntity.badRequest().body(new MessageResponse("Refresh Token is empty!"));
+    }
+
+    @Override
+    public ResponseEntity<?> logout() {
+        Object principle = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (!principle.toString().equals("anonymousUser")) {
+            Long userId = ((UserPrinciple) principle).getId();
+            refreshTokenService.deleteByUserId(userId);
+        }
+
+        ResponseCookie jwtCookie = jwtUtils.getCleanJwtCookie();
+        ResponseCookie jwtRefreshCookie = jwtUtils.getCleanJwtRefreshCookie();
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+                .header(HttpHeaders.SET_COOKIE, jwtRefreshCookie.toString())
+                .body(new MessageResponse("You've been signed out!"));
+    }
+
 }

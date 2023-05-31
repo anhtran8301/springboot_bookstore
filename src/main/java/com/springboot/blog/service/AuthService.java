@@ -1,14 +1,20 @@
 package com.springboot.blog.service;
 
-import com.springboot.blog.payload.JWTAuthResponse;
+import com.springboot.blog.entity.User;
 import com.springboot.blog.payload.LoginDto;
 import com.springboot.blog.payload.RegisterDto;
-import com.springboot.blog.security.UserPrinciple;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.http.ResponseEntity;
+
+import java.util.Optional;
 
 public interface AuthService {
-    JWTAuthResponse login(LoginDto loginDto);
-
-//    UserPrinciple getPrincipal();
+    ResponseEntity<?> login(LoginDto loginDto);
 
     String register(RegisterDto registerDto);
+
+    ResponseEntity<?> refreshToken(HttpServletRequest request);
+
+    ResponseEntity<?> logout();
+
 }

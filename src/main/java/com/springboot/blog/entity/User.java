@@ -40,6 +40,8 @@ public class User {
     @JsonIgnore
     private String password;
 
+    private String resetPasswordToken;
+
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),

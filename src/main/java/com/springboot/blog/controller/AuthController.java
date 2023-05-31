@@ -1,19 +1,16 @@
 package com.springboot.blog.controller;
 
-import com.springboot.blog.payload.JWTAuthResponse;
 import com.springboot.blog.payload.LoginDto;
 import com.springboot.blog.payload.RegisterDto;
 import com.springboot.blog.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.boot.json.GsonJsonParser;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -23,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
     private AuthService authService;
 
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
     public AuthController(AuthService authService) {
         this.authService = authService;
     }
@@ -37,10 +35,8 @@ public class AuthController {
             description = "Http Status 200 Login Successfully"
     )
     @PostMapping(value = "/login")
-    public ResponseEntity<JWTAuthResponse> login(@RequestBody LoginDto loginDto) {
-        JWTAuthResponse jwtAuthResponse = authService.login(loginDto);
-
-        return ResponseEntity.ok(jwtAuthResponse);
+    public ResponseEntity<?> login(@RequestBody LoginDto loginDto) {
+        return authService.login(loginDto);
     }
 
     //build register REST API
@@ -58,4 +54,17 @@ public class AuthController {
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
+
+    @PostMapping("/refresh-token")
+    public ResponseEntity<?> refreshToken(HttpServletRequest request) {
+        return authService.refreshToken(request);
+
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logoutUser() {
+        return authService.logout();
+    }
+
 }
+

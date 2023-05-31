@@ -20,7 +20,6 @@ public class UserPrinciple implements UserDetails {
     private String name;
     private String username;
     private String email;
-
     @JsonIgnore
     private String password;
     private Collection<? extends GrantedAuthority> roles;

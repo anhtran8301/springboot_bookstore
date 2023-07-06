@@ -31,15 +31,20 @@ public class User {
     private String name;
 
     @Column(nullable = false, unique = true)
+    @JsonIgnore
     private String username;
 
     @Column(nullable = false, unique = true)
     private String email;
 
+    @Lob
+    private String avatar;
+
     @Column(nullable = false)
     @JsonIgnore
     private String password;
 
+    @JsonIgnore
     private String resetPasswordToken;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
@@ -47,5 +52,7 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id")
     )
+
+    @JsonIgnore
     private Set<Role> roles;
 }

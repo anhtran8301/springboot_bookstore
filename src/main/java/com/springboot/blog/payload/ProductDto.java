@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
@@ -26,9 +27,17 @@ public class ProductDto {
     @NotEmpty
     private String imageUrl;
 
+    @NotEmpty
+    private BigDecimal unitPrice;
+
+    @NotEmpty
+    private int unitsInStock;
+
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private LocalDateTime dateCreated;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private LocalDateTime dateUpdated;
+
+    private Long bookCategoryId;
 }

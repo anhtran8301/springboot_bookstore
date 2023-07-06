@@ -20,6 +20,7 @@ public class UserPrinciple implements UserDetails {
     private String name;
     private String username;
     private String email;
+    private String avatar;
     @JsonIgnore
     private String password;
     private Collection<? extends GrantedAuthority> roles;
@@ -34,6 +35,7 @@ public class UserPrinciple implements UserDetails {
                 user.getName(),
                 user.getUsername(),
                 user.getEmail(),
+                user.getAvatar(),
                 user.getPassword(),
                 authorities
         );

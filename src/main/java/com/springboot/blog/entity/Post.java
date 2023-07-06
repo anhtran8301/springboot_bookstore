@@ -27,6 +27,10 @@ public class Post {
 	@Column(name = "content", nullable = false)
 	private String content;
 
+	private String createAt;
+
+	private int status;
+
 	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<Comment> comments = new HashSet<>();
 

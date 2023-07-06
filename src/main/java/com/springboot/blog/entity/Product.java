@@ -8,7 +8,10 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -26,6 +29,8 @@ public class Product {
     private String description;
     private boolean active;
     private String imageUrl;
+    private BigDecimal unitPrice;
+    private int unitsInStock;
 
     @CreationTimestamp
     private LocalDateTime dateCreated;
@@ -33,4 +38,7 @@ public class Product {
     @UpdateTimestamp
     private LocalDateTime dateUpdated;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "book_category_id", nullable = false)
+    private BookCategory bookCategory;
 }

@@ -2,6 +2,7 @@ package com.springboot.blog.service.impl;
 
 import com.springboot.blog.entity.Category;
 import com.springboot.blog.entity.Post;
+import com.springboot.blog.exception.BlogAPIException;
 import com.springboot.blog.exception.ResourceNotFoundException;
 import com.springboot.blog.payload.PostDto;
 import com.springboot.blog.payload.PostResponse;
@@ -13,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -39,6 +41,9 @@ public class PostServiceImpl implements PostService {
         Category category = categoryRepository.findById(postDto.getCategoryId())
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "id", postDto.getCategoryId()));
 
+        if (postRepository.existsByTitle(postDto.getTitle())) {
+            throw new BlogAPIException(HttpStatus.BAD_REQUEST, "This title is already exists");
+        }
         //convert DTO to entity
         Post post = mapToEntity(postDto);
         post.setCategory(category);
@@ -88,7 +93,19 @@ public class PostServiceImpl implements PostService {
         Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Post", "id", id));
 
         Category category = categoryRepository.findById(postDto.getCategoryId())
-                        .orElseThrow(() -> new ResourceNotFoundException("Category", "id", postDto.getCategoryId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Category", "id", postDto.getCategoryId()));
+
+        if (!postDto.getTitle().equals(post.getTitle()) && postRepository.existsByTitle(postDto.getTitle())) {
+            throw new BlogAPIException(HttpStatus.BAD_REQUEST, "The title is exist in db");
+        }
+
+        if (postDto.getTitle().equals(post.getTitle())
+            && postDto.getDescription().equals(post.getDescription())
+            && postDto.getContent().equals(post.getContent())
+            && postDto.getCategoryId().equals(post.getCategory().getId())
+        ) {
+            throw new BlogAPIException(HttpStatus.BAD_REQUEST, "Nothing to change");
+        }
 
         post.setTitle(postDto.getTitle());
         post.setDescription(postDto.getDescription());

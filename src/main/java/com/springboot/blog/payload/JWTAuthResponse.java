@@ -10,5 +10,5 @@ import lombok.*;
 public class JWTAuthResponse {
     private String accessToken;
     private String refreshToken;
-    private UserPrinciple data;
+    private UserPrinciple user;
 }

@@ -30,7 +30,7 @@ public class PostDto {
     )
     @NotEmpty
     @Size(min = 10, message = "Post description should have at least 10 characters")
-    private  String description;
+    private String description;
 
     @Schema(
             description = "Blog Post Content"

@@ -17,6 +17,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/api/v1/posts")
 //@CrossOrigin
 @Tag(

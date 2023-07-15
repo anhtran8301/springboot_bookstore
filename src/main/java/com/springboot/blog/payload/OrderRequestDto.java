@@ -5,10 +5,15 @@ import com.springboot.blog.entity.Payment;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+import java.util.List;
+
 @Getter
 @Setter
 public class OrderRequestDto {
-    private Order order;
-    private Payment payment;
-
+    private List<Long> checkedCartId;
+    private String shipNote;
+    private Long userAddressId;
+    private String payType;
+    private BigDecimal DeliveryFee;
 }

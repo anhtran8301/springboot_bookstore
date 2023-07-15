@@ -1,12 +1,7 @@
 package com.springboot.blog.service;
 
-import com.springboot.blog.entity.Product;
-import com.springboot.blog.payload.PostDto;
-import com.springboot.blog.payload.PostResponse;
 import com.springboot.blog.payload.ProductDto;
 import com.springboot.blog.payload.ProductResponse;
-
-import java.util.List;
 
 public interface ProductService {
 //    List<ProductDto> searchProducts(String query);

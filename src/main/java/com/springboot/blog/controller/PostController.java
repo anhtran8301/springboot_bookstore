@@ -1,7 +1,7 @@
 package com.springboot.blog.controller;
 
 import com.springboot.blog.payload.PostDto;
-import com.springboot.blog.payload.PostResponse;
+import com.springboot.blog.payload.PostResponseDto;
 import com.springboot.blog.service.PostService;
 import com.springboot.blog.utils.AppConstants;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,7 +19,6 @@ import java.util.List;
 @RestController
 @CrossOrigin
 @RequestMapping("/api/v1/posts")
-//@CrossOrigin
 @Tag(
         name = "CRUD REST APIs for Post Resource"
 )
@@ -59,7 +58,7 @@ public class PostController {
     )
     // get all posts rest api
     @GetMapping
-    public PostResponse getAllPosts(
+    public PostResponseDto getAllPosts(
             @RequestParam(value = "pageNo", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER, required = false) int pageNo,
             @RequestParam(value = "pageSize", defaultValue = AppConstants.DEFAULT_PAGE_SIZE, required = false) int pageSize,
             @RequestParam(value = "sortBy", defaultValue = AppConstants.DEFAULT_SORT_BY, required = false) String sortBy,

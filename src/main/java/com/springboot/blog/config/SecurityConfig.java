@@ -63,6 +63,7 @@ public class SecurityConfig {
                         //authorize.anyRequest().authenticated())
                         authorize.requestMatchers(HttpMethod.GET, "/api/v1/**").permitAll()
                                 //.requestMatchers("/api/categories/**").permitAll()
+                                .requestMatchers("/api/v1/orders/**").permitAll()
                                 .requestMatchers("/api/v1/momo/create-order").permitAll()
                                 .requestMatchers("/api/v1/auth/**").permitAll()
                                 .requestMatchers("/swagger-ui/**").permitAll()

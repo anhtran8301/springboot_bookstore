@@ -5,7 +5,7 @@ import com.springboot.blog.entity.Post;
 import com.springboot.blog.exception.BlogAPIException;
 import com.springboot.blog.exception.ResourceNotFoundException;
 import com.springboot.blog.payload.PostDto;
-import com.springboot.blog.payload.PostResponse;
+import com.springboot.blog.payload.PostResponseDto;
 import com.springboot.blog.repository.CategoryRepository;
 import com.springboot.blog.repository.PostRepository;
 import com.springboot.blog.service.PostService;
@@ -56,7 +56,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public PostResponse getAllPosts(int pageNo, int pageSize, String sortBy, String sortDir) {
+    public PostResponseDto getAllPosts(int pageNo, int pageSize, String sortBy, String sortDir) {
         Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending()
                 : Sort.by(sortBy).descending();
 
@@ -70,7 +70,7 @@ public class PostServiceImpl implements PostService {
 
         List<PostDto> content = listOfPosts.stream().map(post -> mapToDTO(post)).collect(Collectors.toList());
 
-        PostResponse postResponse = new PostResponse();
+        PostResponseDto postResponse = new PostResponseDto();
         postResponse.setContent(content);
         postResponse.setPageNo(posts.getNumber());
         postResponse.setPageSize(posts.getSize());

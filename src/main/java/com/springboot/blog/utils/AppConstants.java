@@ -7,6 +7,8 @@ public class AppConstants {
     public static final String DEFAULT_SORT_DIRECTION = "asc";
     public static final String REGEX_PASSWORD = "^(?=.*\\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[^\\w\\d\\s:])([^\\s]){8,16}$";
 
+
+
 //    public static final String LANGUAGE_VI = "vi";
 //    public static final String LANGUAGE_EN = "en";
 

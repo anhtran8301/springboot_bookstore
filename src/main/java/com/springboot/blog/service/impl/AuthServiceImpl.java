@@ -141,7 +141,7 @@ public class AuthServiceImpl implements AuthService {
                                 .body(new MessageResponse("Token is refreshed successfully!"));
                     })
                     .orElseThrow(() -> new TokenRefreshException(refreshToken,
-                            "Refresh token is not in database!"));
+                            "Refresh token is not exists!"));
         }
 
         return ResponseEntity.badRequest().body(new MessageResponse("Refresh Token is empty!"));
@@ -204,7 +204,7 @@ public class AuthServiceImpl implements AuthService {
             if(changeAvatar.getAvatar() == null || changeAvatar.getAvatar().trim().equals("")){
                 return new ResponseEntity<>(new MessageResponse("Fail"), HttpStatus.BAD_REQUEST);
             } else{
-                user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User Not Fount with -> username: " + username));
+                user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User Not Found with -> username: " + username));
                 user.setAvatar(changeAvatar.getAvatar());
                 userRepository.save(user);
             }

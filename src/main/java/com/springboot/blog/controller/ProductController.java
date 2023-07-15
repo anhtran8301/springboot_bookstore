@@ -1,8 +1,5 @@
 package com.springboot.blog.controller;
 
-import com.springboot.blog.entity.Product;
-import com.springboot.blog.payload.PostDto;
-import com.springboot.blog.payload.PostResponse;
 import com.springboot.blog.payload.ProductDto;
 import com.springboot.blog.payload.ProductResponse;
 import com.springboot.blog.service.ProductService;

@@ -28,7 +28,7 @@ public class ProductDto {
     private String imageUrl;
 
     @NotEmpty
-    private BigDecimal unitPrice;
+    private double unitPrice;
 
     @NotEmpty
     private int unitsInStock;

@@ -1,6 +1,6 @@
 package com.springboot.blog.exception;
 
-import com.springboot.blog.payload.ErrorDetails;
+import com.springboot.blog.payload.ErrorDetailsDto;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -21,9 +21,9 @@ import java.util.Map;
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     //handler specific exceptions
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ErrorDetails> handleResourceNotFoundException(ResourceNotFoundException exception,
-                                                                        WebRequest webRequest) {
-        ErrorDetails errorDetails = new ErrorDetails(new Date(),
+    public ResponseEntity<ErrorDetailsDto> handleResourceNotFoundException(ResourceNotFoundException exception,
+                                                                           WebRequest webRequest) {
+        ErrorDetailsDto errorDetails = new ErrorDetailsDto(new Date(),
                                         exception.getMessage(),
                                         webRequest.getDescription(false));
 
@@ -31,9 +31,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(BlogAPIException.class)
-    public ResponseEntity<ErrorDetails> handleBlogAPIException(BlogAPIException exception,
-                                                               WebRequest webRequest) {
-        ErrorDetails errorDetails = new ErrorDetails(new Date(),
+    public ResponseEntity<ErrorDetailsDto> handleBlogAPIException(BlogAPIException exception,
+                                                                  WebRequest webRequest) {
+        ErrorDetailsDto errorDetails = new ErrorDetailsDto(new Date(),
                 exception.getMessage(),
                 webRequest.getDescription(false));
 
@@ -42,9 +42,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     //global exceptions
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorDetails> handleGlobalException(Exception exception,
-                                                              WebRequest webRequest) {
-        ErrorDetails errorDetails = new ErrorDetails(new Date(),
+    public ResponseEntity<ErrorDetailsDto> handleGlobalException(Exception exception,
+                                                                 WebRequest webRequest) {
+        ErrorDetailsDto errorDetails = new ErrorDetailsDto(new Date(),
                 exception.getMessage(),
                 webRequest.getDescription(false));
 
@@ -79,9 +79,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 //        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
 //    }
     @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<ErrorDetails> handleAccessDeniedException(AccessDeniedException exception,
-                                                                        WebRequest webRequest) {
-        ErrorDetails errorDetails = new ErrorDetails(new Date(),
+    public ResponseEntity<ErrorDetailsDto> handleAccessDeniedException(AccessDeniedException exception,
+                                                                       WebRequest webRequest) {
+        ErrorDetailsDto errorDetails = new ErrorDetailsDto(new Date(),
                 exception.getMessage(),
                 webRequest.getDescription(false));
 

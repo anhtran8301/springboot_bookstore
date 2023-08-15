@@ -10,14 +10,16 @@ import java.util.List;
 public interface OrderService {
 //    OrderResponseDto placeOrder(OrderRequestDto orderRequestDto);
 
-    Order checkOut (User user, OrderRequestDto orderRequestDto);
+    Order checkOut(User user, OrderRequestDto orderRequestDto);
 
-    void createOrder(Order order);
+    void createOrder(Order order, List<Long> checkedCartId);
 
     List<OrderResponseDto> getOrders(User user);
 
     List<OrderResponseDto> getAllOrders();
 
     OrderResponseDto getOrderById(Long id);
+
+    Order getOrderEntityById(Long id);
 
 }

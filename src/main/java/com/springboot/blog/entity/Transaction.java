@@ -29,7 +29,7 @@ public class Transaction {
 
 
     private String requestId;
-    private BigDecimal amount;
+    private long amount;
     private String partnerUserId;
     private String orderType;
 

@@ -1,4 +1,5 @@
 package com.springboot.blog.momo.enums;
+
 import com.google.gson.annotations.*;
 import com.springboot.blog.momo.utils.MomoConstants;
 
@@ -26,6 +27,8 @@ public enum Language {
         return null;
     }
 
-    public String getLanguage() { return value; }
+    public String getLanguage() {
+        return value;
+    }
 
 }

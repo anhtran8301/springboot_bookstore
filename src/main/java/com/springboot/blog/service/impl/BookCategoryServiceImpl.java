@@ -27,7 +27,7 @@ public class BookCategoryServiceImpl implements BookCategoryService {
     @Override
     public BookCategoryDto addBookCategory(BookCategoryDto bookCategoryDto) {
         User user = userDetailsService.getCurrentUser();
-        if(bookCategoryRepository.existsByName(bookCategoryDto.getName())){
+        if (bookCategoryRepository.existsByName(bookCategoryDto.getName())) {
             throw new BlogAPIException(HttpStatus.BAD_REQUEST, "This name is already exists");
         }
         BookCategory bookCategory = modelMapper.map(bookCategoryDto, BookCategory.class);

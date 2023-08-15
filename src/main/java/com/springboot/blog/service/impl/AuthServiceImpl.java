@@ -35,6 +35,7 @@ import org.springframework.security.core.AuthenticationException;
 import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
 import java.util.*;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -57,35 +58,35 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public ResponseEntity<?> login(LoginDto loginDto) {
-       try {
-           Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                   loginDto.getUsernameOrEmail(), loginDto.getPassword()));
+        try {
+            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                    loginDto.getUsernameOrEmail(), loginDto.getPassword()));
 
-           SecurityContextHolder.getContext().setAuthentication(authentication);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
 
-           UserPrinciple userPrinciple = (UserPrinciple) authentication.getPrincipal();
-           ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(userPrinciple);
-           RefreshToken refreshToken = refreshTokenService.createRefreshToken(userPrinciple.getId());
-           ResponseCookie jwtRefreshCookie = jwtUtils.generateRefreshJwtCookie(refreshToken.getToken());
+            UserPrinciple userPrinciple = (UserPrinciple) authentication.getPrincipal();
+            ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(userPrinciple);
+            RefreshToken refreshToken = refreshTokenService.createRefreshToken(userPrinciple.getId());
+            ResponseCookie jwtRefreshCookie = jwtUtils.generateRefreshJwtCookie(refreshToken.getToken());
 
-           return ResponseEntity.ok()
-                   .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
-                   .header(HttpHeaders.SET_COOKIE, jwtRefreshCookie.toString())
-                   .body(new JWTAuthResponse(
-                           jwtCookie.getValue(),
-                           jwtRefreshCookie.getValue(),
-                           userPrinciple)
-);
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+                    .header(HttpHeaders.SET_COOKIE, jwtRefreshCookie.toString())
+                    .body(new JWTAuthResponse(
+                            jwtCookie.getValue(),
+                            jwtRefreshCookie.getValue(),
+                            userPrinciple)
+                    );
 
 
-       } catch (AuthenticationException e) {
-           throw new BlogAPIException(HttpStatus.UNPROCESSABLE_ENTITY, "Invalid username/password supplied");
-       }
+        } catch (AuthenticationException e) {
+            throw new BlogAPIException(HttpStatus.UNPROCESSABLE_ENTITY, "Invalid username/password supplied");
+        }
     }
 
     @Override
     public ResponseEntity<?> register(RegisterDto registerDto) {
-        if(
+        if (
                 registerDto.getUsername() == null ||
                         registerDto.getEmail() == null ||
                         registerDto.getName() == null ||
@@ -94,16 +95,16 @@ public class AuthServiceImpl implements AuthService {
         }
 
         //add check for username exists in database
-        if(userRepository.existsByUsername(registerDto.getUsername())) {
+        if (userRepository.existsByUsername(registerDto.getUsername())) {
             throw new BlogAPIException(HttpStatus.BAD_REQUEST, "Username is already exists");
         }
 
         //add check for email exists in database
-        if(userRepository.existsByEmail(registerDto.getEmail())) {
+        if (userRepository.existsByEmail(registerDto.getEmail())) {
             throw new BlogAPIException(HttpStatus.BAD_REQUEST, "Email is already exists");
         }
         //if avatar == null, set default avatar
-        if(registerDto.getAvatar() == null || registerDto.getAvatar().trim().isEmpty()){
+        if (registerDto.getAvatar() == null || registerDto.getAvatar().trim().isEmpty()) {
             registerDto.setAvatar("https://firebasestorage.googleapis.com/v0/b/srping-boot-blog.appspot.com/o/images%2Fuser-image.jpg?alt=media&token=b0b9d5b9-5a44-4468-9f38-b0b256c12cb5");
         }
 
@@ -163,6 +164,7 @@ public class AuthServiceImpl implements AuthService {
                 .header(HttpHeaders.SET_COOKIE, jwtRefreshCookie.toString())
                 .body(new MessageResponse("You've been signed out!"));
     }
+
     @Override
     public String resetPasswordRequest(PasswordResetRequest passwordResetRequest,
                                        final HttpServletRequest servletRequest) throws MessagingException, UnsupportedEncodingException {
@@ -196,20 +198,20 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public ResponseEntity<?> changeAvatar(HttpServletRequest httpServletRequest, ChangeAvatar changeAvatar){
+    public ResponseEntity<?> changeAvatar(HttpServletRequest httpServletRequest, ChangeAvatar changeAvatar) {
         String jwt = jwtTokenFilter.parseJwt(httpServletRequest);
         String username = jwtUtils.getUserNameFromJwtToken(jwt);
         User user;
         try {
-            if(changeAvatar.getAvatar() == null || changeAvatar.getAvatar().trim().equals("")){
+            if (changeAvatar.getAvatar() == null || changeAvatar.getAvatar().trim().equals("")) {
                 return new ResponseEntity<>(new MessageResponse("Fail"), HttpStatus.BAD_REQUEST);
-            } else{
+            } else {
                 user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User Not Found with -> username: " + username));
                 user.setAvatar(changeAvatar.getAvatar());
                 userRepository.save(user);
             }
             return new ResponseEntity<>(new MessageResponse("Successfully"), HttpStatus.OK);
-        } catch (UsernameNotFoundException exception){
+        } catch (UsernameNotFoundException exception) {
             return new ResponseEntity<>(new MessageResponse(exception.getMessage()), HttpStatus.NOT_FOUND);
         }
     }
@@ -217,7 +219,7 @@ public class AuthServiceImpl implements AuthService {
     private String passwordResetEmailLink(User user, String applicationUrl, String passwordToken)
             throws MessagingException, UnsupportedEncodingException {
 
-        String url = MessageFormat.format("{0}/api/v1/auth/reset-password?token={1}",applicationUrl, passwordToken);
+        String url = MessageFormat.format("{0}/api/v1/auth/reset-password?token={1}", applicationUrl, passwordToken);
         emailUtil.sendPasswordResetVerificationEmail(user, passwordToken, applicationUrl);
         log.info("Click the link to reset your password :  {}", url);
         return url;

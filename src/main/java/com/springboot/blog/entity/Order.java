@@ -54,6 +54,9 @@ public class Order {
     private List<Transaction> transactions;
 
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_address_id", nullable = false)
+    private UserAddress userAddress;
 //    @JsonView(ViewJson.Base.class)
 //    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
 //    @Transient

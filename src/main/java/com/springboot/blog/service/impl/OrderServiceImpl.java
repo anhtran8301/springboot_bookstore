@@ -31,10 +31,10 @@ public class OrderServiceImpl implements OrderService {
     private final TransactionRepository transactionRepository;
 
     @Override
-    public Order checkOut (User user, OrderRequestDto orderRequestDto){
+    public Order checkOut(User user, OrderRequestDto orderRequestDto) {
         var carts = cartRepository.findByIdIn(orderRequestDto.getCheckedCartId());
         var productsIdInCart = cartRepository.findProductIdByIdIn(orderRequestDto.getCheckedCartId());
-        if(productsIdInCart.size() != orderRequestDto.getCheckedCartId().size()){
+        if (productsIdInCart.size() != orderRequestDto.getCheckedCartId().size()) {
             throw new BlogAPIException(HttpStatus.BAD_REQUEST, "Some products are not in the cart");
         }
 
@@ -52,22 +52,23 @@ public class OrderServiceImpl implements OrderService {
         }
 
 
-        var order = new Order ();
-            order.setId(UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE);
-            order.setStatus("");
-            order.setDateCreated(LocalDateTime.now());
-            order.setLastUpdated(null);
-            order.setUser(user);
-            order.setPayType(orderRequestDto.getPayType());
-            order.setPay(false);
-            order.setShipName("");
-            order.setShipNote("");
-            order.setShipPhone("");
-            order.setDisplayAddress("");
-            order.setTotalPrice(Math.round((calculateTotalPrice(orderDetailBookRes) / 1000) * 1000));
-            order.setOrdersDetails(new ArrayList<>());
+        var order = new Order();
+        order.setId(UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE);
+        order.setStatus("");
+        order.setDateCreated(LocalDateTime.now());
+        System.out.println(order.getDateCreated());
+        order.setLastUpdated(null);
+        order.setUser(user);
+        order.setPayType(orderRequestDto.getPayType());
+        order.setPay(false);
+        order.setShipName("");
+        order.setShipNote("");
+        order.setShipPhone("");
+        order.setDisplayAddress("");
+        order.setTotalPrice(Math.round((calculateTotalPrice(orderDetailBookRes) / 1000) * 1000));
+        order.setOrdersDetails(new ArrayList<>());
 
-        for (OrderDetailBookResponse item : orderDetailBookRes)  {
+        for (OrderDetailBookResponse item : orderDetailBookRes) {
             OrderDetail orderDetail = new OrderDetail();
             orderDetail.setQuantity(item.getQuantity());
             orderDetail.setOrder(order);
@@ -80,24 +81,24 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void createOrder(Order order) {
+    public void createOrder(Order order, List<Long> checkedCartId) {
         orderRepository.save(order);
         order.ordersDetails.forEach(orderDetail -> {
             var product = productRepository.findById(orderDetail.getProduct().getId())
                     .orElseThrow(() -> new ResourceNotFoundException("Product", "id", orderDetail.getProduct().getId()));
 
-            if(orderDetail.getQuantity() <= product.getQuantity()) {
+            if (orderDetail.getQuantity() <= product.getQuantity()) {
                 product.setQuantity(product.getQuantity() - orderDetail.getQuantity());
                 product.setSold(product.getSold() + orderDetail.getQuantity());
             } else {
                 throw new BlogAPIException(HttpStatus.BAD_REQUEST, "Product's quantity is not enough");
             }
         });
-
+        cartService.removeBatchCart(checkedCartId);
     }
 
     @Override
-    public List<OrderResponseDto> getOrders(User user){
+    public List<OrderResponseDto> getOrders(User user) {
         var orders = orderRepository.findByUserId(user.getId());
         var transactions = transactionRepository.findAll();
 
@@ -128,11 +129,10 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderResponseDto> getAllOrders(){
+    public List<OrderResponseDto> getAllOrders() {
         var orders = orderRepository.findAll();
         var transactions = transactionRepository.findAll();
 
-        System.out.println(orders.size());
         List<OrderResponseDto> result = orders.stream()
                 .map(order -> {
                     Optional<Transaction> transaction = transactions.stream()
@@ -159,7 +159,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderResponseDto getOrderById(Long id){
+    public OrderResponseDto getOrderById(Long id) {
         var order = orderRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("Order", "id", id));
 
@@ -172,7 +172,7 @@ public class OrderServiceImpl implements OrderService {
         return orderResponse;
     }
 
-    public Order getOrderEntityById(Long id){
+    public Order getOrderEntityById(Long id) {
         var order = orderRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("Order", "id", id));
 
@@ -187,7 +187,7 @@ public class OrderServiceImpl implements OrderService {
         return order;
     }
 
-    private List<OrderDetailResponseDto> getOrderDetails(Long orderId){
+    private List<OrderDetailResponseDto> getOrderDetails(Long orderId) {
         var orderDetails = orderDetailRepository.getOrderDetailByOrderId(orderId);
         var products = productRepository.findAll();
 
@@ -212,7 +212,6 @@ public class OrderServiceImpl implements OrderService {
     }
 
 
-
     private ProductDto mapToDTO(Product product) {
         //using ModelMapper
         ProductDto productDto = modelMapper.map(product, ProductDto.class);
@@ -228,9 +227,9 @@ public class OrderServiceImpl implements OrderService {
         return totalPrice;
     }
 
-    public Order updateOrderStatus(OrderStatusRequestDto request){
+    public Order updateOrderStatus(OrderStatusRequestDto request) {
         var order = getOrderEntityById(request.getOrderId());
-        if(order == null) {
+        if (order == null) {
             throw new ResourceNotFoundException("Order", "id", request.getOrderId());
         }
         order.setStatus(request.getStatus());

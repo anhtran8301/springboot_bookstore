@@ -16,6 +16,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class PasswordResetTokenServiceImpl implements PasswordResetTokenService {
     private final PasswordResetTokenRepository passwordResetTokenRepository;
+
     @Override
     public void createPasswordResetTokenForUser(User user, String passwordToken) {
         PasswordResetToken passwordRestToken = new PasswordResetToken(passwordToken, user);
@@ -25,13 +26,13 @@ public class PasswordResetTokenServiceImpl implements PasswordResetTokenService 
     @Override
     public String validatePasswordResetToken(String passwordResetToken) {
         PasswordResetToken passwordToken = passwordResetTokenRepository.findByToken(passwordResetToken);
-        if(passwordToken == null){
+        if (passwordToken == null) {
 //            throw new BlogAPIException(HttpStatus.BAD_REQUEST, "Invalid verification token");
             return "Invalid verification token";
         }
         User user = passwordToken.getUser();
         Calendar calendar = Calendar.getInstance();
-        if ((passwordToken.getExpirationTime().getTime()-calendar.getTime().getTime())<= 0){
+        if ((passwordToken.getExpirationTime().getTime() - calendar.getTime().getTime()) <= 0) {
             return "Link already expired, resend link";
         }
         return "valid";

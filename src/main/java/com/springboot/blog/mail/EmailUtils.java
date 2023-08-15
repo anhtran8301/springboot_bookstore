@@ -19,13 +19,13 @@ public class EmailUtils {
     private final JavaMailSender mailSender;
 
     public void sendPasswordResetVerificationEmail(User user, String token, String applicationUrl) throws MessagingException, UnsupportedEncodingException {
-        String url = MessageFormat.format("{0}/api/v1/auth/reset-password?token={1}",applicationUrl, token);
+        String url = MessageFormat.format("{0}/api/v1/auth/reset-password?token={1}", applicationUrl, token);
         String subject = "Password Reset Request Verification";
         String senderName = "User Registration Portal Service";
-        String mailContent = "<p> Hi, "+ user.getName()+ ", </p>"+
-                "<p><b>You recently requested to reset your password,</b>"+"" +
-                "Please, follow the link below to complete the action.</p>"+
-                "<a href=\"" + url + "\">Reset password</a>"+
+        String mailContent = "<p> Hi, " + user.getName() + ", </p>" +
+                "<p><b>You recently requested to reset your password,</b>" +
+                "Please, follow the link below to complete the action.</p>" +
+                "<a href=\"" + url + "\">Reset password</a>" +
                 "<p> Users Registration Portal Service";
         MimeMessage message = mailSender.createMimeMessage();
         var messageHelper = new MimeMessageHelper(message);

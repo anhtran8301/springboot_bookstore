@@ -29,7 +29,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String usernameOrEmail) throws UsernameNotFoundException {
         User user = userRepository.findByUsernameOrEmail(usernameOrEmail, usernameOrEmail)
                 .orElseThrow(() ->
-                        new UsernameNotFoundException("User not found with username or email: "+ usernameOrEmail));
+                        new UsernameNotFoundException("User not found with username or email: " + usernameOrEmail));
 
         return UserPrinciple.build(user);
     }
@@ -39,12 +39,12 @@ public class CustomUserDetailsService implements UserDetailsService {
         String username;
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        if(principal instanceof UserDetails) {
+        if (principal instanceof UserDetails) {
             username = ((UserDetails) principal).getUsername();
         } else {
             username = principal.toString();
         }
-        if(userRepository.existsByUsername(username)) {
+        if (userRepository.existsByUsername(username)) {
             user = userRepository.findByUsername(username);
         } else {
             user = Optional.of(new User());

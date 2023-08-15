@@ -12,20 +12,18 @@ import lombok.Setter;
 @NoArgsConstructor
 
 public class PaymentRequest {
-    public String orderInfo;
-    public long amount;
-    public String partnerName;
-    public String subPartnerCode;
-    public String requestType;
-    public String redirectUrl;
-    public String ipnUrl;
-    public String storeId;
-    public String extraData;
-    public String partnerClientId;
-    public Boolean autoCapture = true;
-    public String signature;
     public String partnerCode;
     public String orderId;
     public String requestId;
-    public String lang;
+    public long amount;
+    public String orderInfo;
+    public String partnerUserId;
+    public String orderType;
+    public long transId;
+    public int resultCode;
+    public String message;
+    public String payType;
+    public long responseTime;
+    public String extraData;
+    public String signature;
 }

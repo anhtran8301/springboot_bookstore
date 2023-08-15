@@ -29,6 +29,7 @@ public class AuthController {
     private AuthService authService;
 
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+
     public AuthController(AuthService authService) {
         this.authService = authService;
     }
@@ -76,7 +77,7 @@ public class AuthController {
 
     @PostMapping("/password-reset-request")
     public ResponseEntity<String> resetPasswordRequest(@Valid @RequestBody PasswordResetRequest passwordResetRequest,
-                                       final HttpServletRequest servletRequest) throws MessagingException, UnsupportedEncodingException {
+                                                       final HttpServletRequest servletRequest) throws MessagingException, UnsupportedEncodingException {
         String url = authService.resetPasswordRequest(passwordResetRequest, servletRequest);
 
         return new ResponseEntity<>(url, HttpStatus.OK);
@@ -84,7 +85,7 @@ public class AuthController {
 
     @PostMapping("/reset-password")
     public ResponseEntity<String> resetPassword(@Valid @RequestBody PasswordResetRequest passwordResetRequest,
-                                @RequestParam("token") String token) {
+                                                @RequestParam("token") String token) {
 
         return new ResponseEntity<>(authService.resetPassword(passwordResetRequest, token), HttpStatus.OK);
     }
@@ -93,7 +94,7 @@ public class AuthController {
             name = "Bear Authentication"
     )
     @PutMapping("/change-avatar")
-    public ResponseEntity<?> changeAvatar(HttpServletRequest httpServletRequest, @Valid @RequestBody ChangeAvatar changeAvatar){
+    public ResponseEntity<?> changeAvatar(HttpServletRequest httpServletRequest, @Valid @RequestBody ChangeAvatar changeAvatar) {
         return authService.changeAvatar(httpServletRequest, changeAvatar);
     }
 }

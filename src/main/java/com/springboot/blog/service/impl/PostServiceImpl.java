@@ -100,9 +100,9 @@ public class PostServiceImpl implements PostService {
         }
 
         if (postDto.getTitle().equals(post.getTitle())
-            && postDto.getDescription().equals(post.getDescription())
-            && postDto.getContent().equals(post.getContent())
-            && postDto.getCategoryId().equals(post.getCategory().getId())
+                && postDto.getDescription().equals(post.getDescription())
+                && postDto.getContent().equals(post.getContent())
+                && postDto.getCategoryId().equals(post.getCategory().getId())
         ) {
             throw new BlogAPIException(HttpStatus.BAD_REQUEST, "Nothing to change");
         }

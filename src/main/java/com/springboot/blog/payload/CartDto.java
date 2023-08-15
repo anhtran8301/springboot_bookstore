@@ -18,5 +18,6 @@ public class CartDto {
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long userId;
+//    private int discount;
 
 }

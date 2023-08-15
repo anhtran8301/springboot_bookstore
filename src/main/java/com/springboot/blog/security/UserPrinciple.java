@@ -25,7 +25,7 @@ public class UserPrinciple implements UserDetails {
     private String password;
     private Collection<? extends GrantedAuthority> roles;
 
-    public static UserPrinciple build(User user){
+    public static UserPrinciple build(User user) {
         Set<GrantedAuthority> authorities = user
                 .getRoles()
                 .stream()

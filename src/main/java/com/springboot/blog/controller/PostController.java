@@ -14,6 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
+
 import java.util.List;
 
 @RestController
@@ -39,12 +40,12 @@ public class PostController {
             description = "Http Status 201 CREATED"
     )
     @SecurityRequirement(
-        name = "Bear Authentication"
+            name = "Bear Authentication"
     )
     // create blog post rest api
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
-    public ResponseEntity<PostDto> createPost(@Valid @RequestBody PostDto postDto){
+    public ResponseEntity<PostDto> createPost(@Valid @RequestBody PostDto postDto) {
         return new ResponseEntity<>(postService.createPost(postDto), HttpStatus.CREATED);
     }
 
@@ -63,7 +64,7 @@ public class PostController {
             @RequestParam(value = "pageSize", defaultValue = AppConstants.DEFAULT_PAGE_SIZE, required = false) int pageSize,
             @RequestParam(value = "sortBy", defaultValue = AppConstants.DEFAULT_SORT_BY, required = false) String sortBy,
             @RequestParam(value = "sortDir", defaultValue = AppConstants.DEFAULT_SORT_DIRECTION, required = false) String sortDir
-    ){
+    ) {
         return postService.getAllPosts(pageNo, pageSize, sortBy, sortDir);
     }
 
@@ -77,7 +78,7 @@ public class PostController {
     )
     //build get post by id
     @GetMapping("/{id}")
-    public ResponseEntity<PostDto> getPostById(@PathVariable(name = "id") long id){
+    public ResponseEntity<PostDto> getPostById(@PathVariable(name = "id") long id) {
         return ResponseEntity.ok(postService.getPostById(id));
     }
 
@@ -95,7 +96,7 @@ public class PostController {
     // update post by id rest api
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
-    public ResponseEntity<PostDto> updatePost(@Valid @RequestBody PostDto postDto, @PathVariable(name = "id") long id){
+    public ResponseEntity<PostDto> updatePost(@Valid @RequestBody PostDto postDto, @PathVariable(name = "id") long id) {
 
         PostDto postResponse = postService.updatePost(postDto, id);
 
@@ -116,7 +117,7 @@ public class PostController {
     )
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deletePost(@PathVariable(name = "id") long id){
+    public ResponseEntity<String> deletePost(@PathVariable(name = "id") long id) {
 
         postService.deletePostById(id);
 
@@ -125,7 +126,7 @@ public class PostController {
 
     //build get all posts by category REST API
     @GetMapping("/categories/{id}")
-    public ResponseEntity<List<PostDto>> getAllPostsByCategory (@PathVariable("id") Long categoryId) {
+    public ResponseEntity<List<PostDto>> getAllPostsByCategory(@PathVariable("id") Long categoryId) {
         List<PostDto> posts = postService.getAllPostsByCategory(categoryId);
 
         return ResponseEntity.ok(posts);

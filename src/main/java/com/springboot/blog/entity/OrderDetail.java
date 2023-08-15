@@ -29,7 +29,7 @@ public class OrderDetail {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
-    @JsonIncludeProperties({ "id" })
+    @JsonIncludeProperties({"id"})
     private Product product;
 
 }

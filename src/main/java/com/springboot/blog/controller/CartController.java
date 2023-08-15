@@ -79,7 +79,7 @@ public class CartController {
     )
     @DeleteMapping
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<String> removeFromCart(HttpServletRequest httpServletRequest, @RequestBody Long productId){
+    public ResponseEntity<String> removeFromCart(HttpServletRequest httpServletRequest, @RequestBody Long productId) {
         String jwt = jwtTokenFilter.parseJwt(httpServletRequest);
         String username = jwtUtils.getUserNameFromJwtToken(jwt);
         User user = userRepository.findByUsername(username).orElseThrow(()
@@ -109,7 +109,7 @@ public class CartController {
     )
     @PostMapping("/batch")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<List<CartDto>> addBatchCart(HttpServletRequest httpServletRequest, List<CartDto> request){
+    public ResponseEntity<List<CartDto>> addBatchCart(HttpServletRequest httpServletRequest, List<CartDto> request) {
         String jwt = jwtTokenFilter.parseJwt(httpServletRequest);
         String username = jwtUtils.getUserNameFromJwtToken(jwt);
         User user = userRepository.findByUsername(username).orElseThrow(()

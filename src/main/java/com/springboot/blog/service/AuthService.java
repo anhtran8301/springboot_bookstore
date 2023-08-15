@@ -29,7 +29,7 @@ public interface AuthService {
 
     String resetPassword(PasswordResetRequest passwordResetRequest, String token);
 
-//    ResponseEntity<?> changeAvatar(HttpServletRequest httpServletRequest, @Valid @RequestBody ChangeAvatar changeAvatar);
+    //    ResponseEntity<?> changeAvatar(HttpServletRequest httpServletRequest, @Valid @RequestBody ChangeAvatar changeAvatar);
     ResponseEntity<?> changeAvatar(HttpServletRequest httpServletRequest, ChangeAvatar changeAvatar);
 
 }

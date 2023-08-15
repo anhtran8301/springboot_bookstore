@@ -1,15 +1,13 @@
 package com.springboot.blog.entity;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.Set;
 
 @Setter
@@ -24,6 +22,9 @@ import java.util.Set;
         }),
         @UniqueConstraint(columnNames = {
                 "email",
+        }),
+        @UniqueConstraint(columnNames = {
+                "phone",
         }),
 })
 public class User {
@@ -40,6 +41,9 @@ public class User {
 
     @Column(nullable = false, unique = true)
     private String email;
+
+    @Column(nullable = false, unique = true)
+    private String phone;
 
     @Lob
     private String avatar;
@@ -59,6 +63,10 @@ public class User {
     @JsonIgnore
     private Set<Order> orders;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private Set<UserAddress> userAddress;
+
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
@@ -66,4 +74,11 @@ public class User {
     )
     @JsonIgnore
     private Set<Role> roles;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    @JsonManagedReference
+    private List<UserVoucher> userVouchers;
+
+
 }

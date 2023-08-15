@@ -2,18 +2,18 @@ package com.springboot.blog.service.impl;
 
 import com.springboot.blog.entity.Cart;
 import com.springboot.blog.entity.Product;
+import com.springboot.blog.entity.SaleProduct;
 import com.springboot.blog.entity.User;
 import com.springboot.blog.exception.BlogAPIException;
 import com.springboot.blog.exception.ResourceNotFoundException;
 import com.springboot.blog.payload.CartDto;
 import com.springboot.blog.payload.ProductDto;
-import com.springboot.blog.repository.CartRepository;
-import com.springboot.blog.repository.ProductRepository;
-import com.springboot.blog.repository.UserRepository;
+import com.springboot.blog.repository.*;
 import com.springboot.blog.security.JwtAuthenticationFilter;
 import com.springboot.blog.security.JwtUtils;
 import com.springboot.blog.service.CartService;
 import com.springboot.blog.service.ProductService;
+import com.springboot.blog.utils.AppConstants;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -34,11 +34,10 @@ public class CartServiceImpl implements CartService {
 
     private final CartRepository cartRepository;
     private final ProductRepository productRepository;
-    private final UserRepository userRepository;
-    private final JwtAuthenticationFilter jwtTokenFilter;
-    private final JwtUtils jwtUtils;
     private final ModelMapper mapper;
     private final ProductService productService;
+    private final SaleRepository saleRepository;
+    private final SaleProductRepository saleProductRepository;
 
     @Override
     public CartDto addToCart(User user, Long productId, int quantity) {
@@ -56,22 +55,29 @@ public class CartServiceImpl implements CartService {
     }
 
     public CartDto updateExistCart(Cart cart, Long productId, int quantity) {
-        Product product  = productRepository.findById(productId)
+        Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product", "id", productId));
+
+        var sale = saleRepository.getCurrentSales().stream().findFirst();
 
         cart.setQuantity(cart.getQuantity() + quantity);
 
         if (cart.getQuantity() <= product.getQuantity() && cart.getQuantity() > 0) {
+            if(sale.isPresent()){
+                var saleProduct = saleProductRepository
+                        .findBySaleIdAndProductId(sale.get().getId(), product.getId());
+                if(saleProduct != null){
 
-            Cart updatedCart = cartRepository.save(cart);
-
-//            updatedCart.setProduct(product);
-
+                    updateBookSaleQuantity(saleProduct, cart);
+                }
+            }
+            var updatedCart = cartRepository.save(cart);
+            updatedCart.setProduct(product);
 //            10121
 //            product.setCart(updatedCart);
             return mapper.map(updatedCart, CartDto.class);
         } else {
-            throw new BlogAPIException(HttpStatus.BAD_REQUEST, "Product is not enough");
+            throw new BlogAPIException(HttpStatus.BAD_REQUEST, AppConstants.BOOK_NOT_ENOUGH);
         }
     }
 
@@ -79,20 +85,31 @@ public class CartServiceImpl implements CartService {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product", "id", productId));
 
+        var sale = saleRepository.getCurrentSales().stream().findFirst();
+
         Cart newCart = new Cart(quantity, user, product);
 
         if (newCart.getQuantity() <= product.getQuantity() && newCart.getQuantity() > 0) {
+
+            if(sale.isPresent()){
+                var saleProduct = saleProductRepository
+                        .findBySaleIdAndProductId(sale.get().getId(), product.getId());
+                if(saleProduct != null){
+                    updateBookSaleQuantity(saleProduct, newCart);
+                }
+            }
+
             var result = cartRepository.save(newCart);
             result.setProduct(product);
             return mapper.map(result, CartDto.class);
         } else {
-            throw new BlogAPIException(HttpStatus.BAD_REQUEST, "Product is not enough");
+            throw new BlogAPIException(HttpStatus.BAD_REQUEST, AppConstants.BOOK_NOT_ENOUGH);
         }
 
     }
 
     @Override
-    public List<CartDto> addBatchCart(User user, List<CartDto> listCart){
+    public List<CartDto> addBatchCart(User user, List<CartDto> listCart) {
 
         for (CartDto cartDto : listCart) {
             this.addToCart(user, cartDto.getProductId(), cartDto.getQuantity());
@@ -129,14 +146,14 @@ public class CartServiceImpl implements CartService {
                 .orElseThrow(() -> new ResourceNotFoundException("Cart", "id", productId));
 
         System.out.println(cart);
-            cartRepository.delete(cart);
+        cartRepository.delete(cart);
     }
 
     @Override
     public List<CartDto> getCarts(Long userId) {
         List<Cart> carts = cartRepository.findByUserId(userId);
         List<CartDto> cartResponse = new ArrayList<>();
-        for (Cart cart: carts) {
+        for (Cart cart : carts) {
             var product = productRepository.findById(cart.getProduct().getId());
             var productResponse = productService.getProductById(product.get().getId());
             cartResponse.add(new CartDto(
@@ -158,6 +175,12 @@ public class CartServiceImpl implements CartService {
             throw new ResourceNotFoundException("Category", "userId", userId);
         } else {
             cartRepository.deleteAll(carts);
+        }
+    }
+
+    private void updateBookSaleQuantity(SaleProduct saleProduct, Cart cart){
+        if(cart.getQuantity() > saleProduct.getQuantity()){
+            throw new BlogAPIException(HttpStatus.BAD_REQUEST, AppConstants.FLASH_SALE_BOOK_NOT_ENOUGH);
         }
     }
 

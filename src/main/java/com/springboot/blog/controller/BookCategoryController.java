@@ -25,6 +25,7 @@ public class BookCategoryController {
     public BookCategoryController(BookCategoryService bookCategoryService) {
         this.bookCategoryService = bookCategoryService;
     }
+
     @Operation(
             summary = "Get All Books Categories REST API",
             description = "Get All Books Categories REST API is used to fetch all the books categories from the database"

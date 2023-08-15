@@ -70,7 +70,7 @@ public class CommentServiceImpl implements CommentService {
         Comment comment = commentRepository.findById(commentId).orElseThrow(
                 () -> new ResourceNotFoundException("Comment", "id", commentId));
 
-        if(!comment.getPost().getId().equals(post.getId())){
+        if (!comment.getPost().getId().equals(post.getId())) {
             throw new BlogAPIException(HttpStatus.BAD_REQUEST, "Comment with id " + commentId + " does not belongs to this post");
         }
 
@@ -85,7 +85,7 @@ public class CommentServiceImpl implements CommentService {
         Comment comment = commentRepository.findById(commentId).orElseThrow(
                 () -> new ResourceNotFoundException("Comment", "id", commentId));
 
-        if(!comment.getPost().getId().equals(post.getId())){
+        if (!comment.getPost().getId().equals(post.getId())) {
             throw new BlogAPIException(HttpStatus.BAD_REQUEST, "Comment with id " + commentId + " does not belongs to this post");
         }
 
@@ -108,7 +108,7 @@ public class CommentServiceImpl implements CommentService {
         Comment comment = commentRepository.findById(commentId).orElseThrow(
                 () -> new ResourceNotFoundException("Comment", "id", commentId));
 
-        if(!comment.getPost().getId().equals(post.getId())){
+        if (!comment.getPost().getId().equals(post.getId())) {
             throw new BlogAPIException(HttpStatus.BAD_REQUEST, "Comment with id " + commentId + " does not belongs to this post");
         }
 

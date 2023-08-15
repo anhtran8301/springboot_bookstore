@@ -1,6 +1,6 @@
-.idea/
-*.iml
-*.iws
-target/
-.sonar/
-.sonarlint/
+#.idea/
+#*.iml
+#*.iws
+#target/
+#.sonar/
+#.sonarlint/
